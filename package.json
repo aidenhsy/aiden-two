@@ -1,0 +1,26 @@
+{
+  "name": "nextjs",
+  "version": "4.0.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/data-grid": "^4.0.0-alpha.18",
+    "@material-ui/icons": "^4.11.2",
+    "@stripe/react-stripe-js": "^1.2.1",
+    "@stripe/stripe-js": "^1.11.0",
+    "axios": "^0.21.1",
+    "clsx": "latest",
+    "firebase": "^8.2.4",
+    "next": "latest",
+    "prop-types": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "stripe": "^8.132.0"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
+  }
+}
