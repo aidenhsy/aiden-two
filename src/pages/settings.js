@@ -1,10 +1,15 @@
-import React from 'react';
+import Head from 'next/head';
+import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Link from 'next/link';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -30,8 +35,27 @@ const useStyles = makeStyles((theme) => ({
 
 const Settings = () => {
   const classes = useStyles();
+  const [displayName, setDisplayName] = useState(null);
   return (
     <React.Fragment>
+      <Head>
+        <title>Purchase</title>
+      </Head>
+      <AppBar color="inherit" elevation={0} style={{ alignItems: 'center' }}>
+        <Toolbar>
+          <Container>
+            <Link href="/dashboard">
+              <Button
+                disableRipple
+                disableFocusRipple
+                endIcon={<DashboardIcon />}
+              >
+                Dashboard
+              </Button>
+            </Link>
+          </Container>
+        </Toolbar>
+      </AppBar>
       <Container className={classes.root} maxWidth="xs">
         <Grid container className={classes.rootGrid} spacing={4}>
           <Grid item>
@@ -42,7 +66,18 @@ const Settings = () => {
             />
           </Grid>
           <Grid item className={classes.gridItem}>
-            <TextField variant="outlined" fullWidth />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              name="displayName"
+              label="Display Name"
+              id="displayName"
+              variant="outlined"
+              fullWidth
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
           </Grid>
           <Grid item className={classes.gridItem}>
             <Button
@@ -50,7 +85,7 @@ const Settings = () => {
               variant="contained"
               className={classes.button}
               fullWidth
-              disabled
+              disabled={displayName === null ? true : false}
             >
               Update
             </Button>

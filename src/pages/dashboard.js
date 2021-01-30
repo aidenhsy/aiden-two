@@ -60,8 +60,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const classes = useStyles();
-  const { currentUser } = useAuth();
-  console.log(currentUser);
   const logoutHandler = async () => {
     try {
       await User.logout();

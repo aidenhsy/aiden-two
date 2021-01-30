@@ -12,18 +12,28 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import { useAuth } from '../contexts/authContext';
 import Link from 'next/link';
 import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles((theme) => ({
-  box: {
+  box1: {
     border: '1px solid grey',
     height: theme.spacing(6),
     marginBottom: theme.spacing(4),
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     padding: theme.spacing(0, 4),
+  },
+  box2: {
+    border: '1px solid grey',
+    height: theme.spacing(6),
+    marginBottom: theme.spacing(4),
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(0, 4),
+    background: 'grey',
   },
   iconButton: {
     background: 'linear-gradient(45deg, #303f9f, #7986cb)',
@@ -51,7 +61,6 @@ const times = [
 
 const History = () => {
   const classes = useStyles();
-  const { currentUser } = useAuth();
 
   const clickHandler = () => {
     console.log('clicked');
@@ -97,12 +106,35 @@ const History = () => {
           ))} */}
           {times.map((time) => {
             if (new Date(time) > new Date()) {
-              return <h1>{new Date(time).toString()}</h1>;
+              return (
+                <Box className={classes.box1}>
+                  <h3>
+                    {new Date(time)
+                      .toString()
+                      .split(' ')
+                      .slice(0, -6)
+                      .join(' ')}{' '}
+                    @ {new Date(time).toString().split(' ')[4].slice(0, -3)}
+                  </h3>
+                  <Button color="secondary">Cancel</Button>
+                </Box>
+              );
             }
           })}
           {times.map((time) => {
             if (new Date(time) < new Date()) {
-              return <h2>{new Date(time).toString()}</h2>;
+              return (
+                <Box className={classes.box2}>
+                  <h3>
+                    {new Date(time)
+                      .toString()
+                      .split(' ')
+                      .slice(0, -6)
+                      .join(' ')}{' '}
+                    @ {new Date(time).toString().split(' ')[4].slice(0, -3)}
+                  </h3>
+                </Box>
+              );
             }
           })}
         </Grid>
