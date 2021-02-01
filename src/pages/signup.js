@@ -1,4 +1,10 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import User from '../models/User';
+import { useAuth } from '../contexts/authContext';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -11,13 +17,10 @@ import Container from '@material-ui/core/Container';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import HomeIcon from '@material-ui/icons/Home';
-import NextLink from 'next/link';
-import User from '../models/User';
-import { useAuth } from '../contexts/authContext';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(20),
+    marginTop: theme.spacing(10),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -36,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignUp() {
+  const router = useRouter();
   const classes = useStyles();
   const { currentUser } = useAuth();
   const [displayName, setDisplayName] = useState('');
@@ -55,6 +59,7 @@ export default function SignUp() {
         hours: 0,
       });
       await newUser.create();
+      router.push('/dashboard');
     } catch (error) {
       console.log(error);
     }
@@ -62,6 +67,9 @@ export default function SignUp() {
 
   return (
     <React.Fragment>
+      <Head>
+        <title>Sign Up</title>
+      </Head>
       <AppBar color="inherit" elevation={0} style={{ alignItems: 'center' }}>
         <Toolbar>
           <Container>

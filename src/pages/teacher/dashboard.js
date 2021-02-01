@@ -19,8 +19,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import User from '../models/User';
-import { useAuth } from '../contexts/authContext';
+import User from '../../models/User';
+import { useAuth } from '../../contexts/authContext';
 
 const useStyles = makeStyles((theme) => ({
   toolbarMargin: {
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard() {
+export default function TeacherDashboard() {
   const router = useRouter();
   const classes = useStyles();
   const { currentUser } = useAuth();
@@ -133,7 +133,7 @@ export default function Dashboard() {
           </List>
           <Grid container spacing={4} className={classes.grid}>
             <Grid item xs={12} sm={6}>
-              <Link href="/purchase">
+              <Link href="/teacher/schedule">
                 <Card raised className={classes.card} variant="elevation">
                   <Grid
                     direction="column"
@@ -143,7 +143,7 @@ export default function Dashboard() {
                     spacing={0}
                     style={{ height: '100%' }}
                   >
-                    <Typography variant="h4">Purchase</Typography>
+                    <Typography variant="h4">Schedule</Typography>
                   </Grid>
                 </Card>
               </Link>

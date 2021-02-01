@@ -1,6 +1,12 @@
+import React, { useState } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
-import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAuth } from '../contexts/authContext';
+import User from '../models/User';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,11 +18,7 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import { useRouter } from 'next/router';
-import { useAuth } from '../contexts/authContext';
-import Link from 'next/link';
-
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { firestore } from '../config/firebase';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -57,6 +59,7 @@ const Purchase = () => {
 
   const paymentHandler = async (e) => {
     e.preventDefault();
+
     const { data } = await axios.post('/api/payment_intents', {
       amount: hours * 20 * 100,
     });
@@ -69,19 +72,10 @@ const Purchase = () => {
     const confirmCardPayment = await stripe.confirmCardPayment(data, {
       payment_method: paymentMethodReq.paymentMethod.id,
     });
-    console.log(confirmCardPayment.paymentIntent.status, hours);
-    //
-    // if (confirmCardPayment.paymentIntent.status === 'succeeded') {
-    //   await currentUser.refresh();
-    //   currentUser.hours += hours;
-    //   await currentUser.save();
-    //   router.push('/dashboard');
-    //   return;
-    // }
-    // do an if statement for status failed.
-    // if (confirmCardPayment.paymentIntent.status === 'succeeded') {
-    //   router.push('/booking');
-    // }
+    if (confirmCardPayment.paymentIntent.status === 'succeeded') {
+      currentUser.addHours(hours);
+    }
+    router.push('/dashboard');
   };
 
   return (

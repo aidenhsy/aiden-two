@@ -1,4 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Head from 'next/head';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { signInWithGoogle } from '../config/firebase';
+import User from '../models/User';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,12 +18,10 @@ import Container from '@material-ui/core/Container';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import HomeIcon from '@material-ui/icons/Home';
-import NextLink from 'next/link';
-import { signInWithGoogle } from '../config/firebase';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(20),
+    marginTop: theme.spacing(10),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -37,9 +41,24 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      await User.login(email, password);
+      router.push('/dashboard');
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <React.Fragment>
+      <Head>
+        <title>Login</title>
+      </Head>
       <AppBar color="inherit" elevation={0} style={{ alignItems: 'center' }}>
         <Toolbar>
           <Container>
@@ -60,16 +79,15 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} onSubmit={submitHandler}>
             <TextField
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              id="email"
               label="Email Address"
-              name="email"
-              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoFocus
             />
             <TextField
@@ -77,11 +95,10 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
-              id="password"
-              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               type="submit"

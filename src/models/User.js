@@ -5,9 +5,9 @@ export default class User {
     this.uid = auth.uid;
     this.email = auth.email;
     this.displayName = auth.displayName;
-    this.isTeacher = false;
-    this.hours = 0;
-    this.bookings = [];
+    this.isTeacher = auth.isTeacher || false;
+    this.hours = auth.hours || 0;
+    this.bookings = auth.bookings || [];
   }
 
   async create() {
@@ -17,6 +17,7 @@ export default class User {
     if (!snapShot.exists) {
       try {
         await userRef.set({
+          uid: this.uid,
           email: this.email,
           displayName: this.displayName,
           isTeacher: this.isTeacher,
@@ -34,12 +35,24 @@ export default class User {
     return auth.createUserWithEmailAndPassword(email, password);
   }
 
-  login() {
-    return auth.signInWithEmailAndPassword(this.email, this.password);
+  static async getUser(uid) {
+    const user = await firestore.doc(`users/${uid}`).get();
+    return user.data();
+  }
+
+  static login(email, password) {
+    return auth.signInWithEmailAndPassword(email, password);
   }
 
   static logout() {
     return auth.signOut();
+  }
+
+  async addHours(addedHours) {
+    const fetchedUser = await User.getUser(this.uid);
+    const currentHours = fetchedUser.hours;
+    const newHours = currentHours + addedHours;
+    await firestore.doc(`users/${this.uid}`).update({ hours: newHours });
   }
 
   resetPassword(email) {
