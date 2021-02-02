@@ -10,15 +10,26 @@ export function useAuth() {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (userAuth) => {
+      setLoading(true);
       if (userAuth) {
-        const newUser = new User(userAuth);
-        await newUser.create();
-        setCurrentUser(newUser);
+        const fetchedUser = await User.getUser(userAuth.uid);
+        if (fetchedUser && fetchedUser.uid) {
+          const user = new User(fetchedUser);
+          //only create a new user when logged in
+          //through third party providers
+          if (user.displayName) {
+            await user.create();
+          }
+          setCurrentUser(user);
+          setLoading(false);
+        }
       } else {
         setCurrentUser(null);
+        setLoading(false);
       }
     });
 
@@ -28,6 +39,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     setCurrentUser,
+    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,7 +32,7 @@ const Home = () => {
   const router = useRouter();
   const { currentUser } = useAuth();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (currentUser && currentUser.email) {
       router.push('/dashboard');
     }
