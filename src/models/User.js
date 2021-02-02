@@ -1,13 +1,15 @@
 import { auth, firestore } from '../config/firebase';
+import Booking from '../models/Booking';
 
 export default class User {
   constructor(auth) {
     this.uid = auth.uid;
     this.email = auth.email;
     this.displayName = auth.displayName;
-    this.isTeacher = auth.isTeacher || false;
+    this.isAdmin = auth.isAdmin || false;
     this.hours = auth.hours || 0;
     this.bookings = auth.bookings || [];
+    this.createdAt = auth.createdAt || new Date();
   }
 
   async create() {
@@ -16,11 +18,12 @@ export default class User {
     const snapShot = await userRef.get();
     if (!snapShot.exists) {
       try {
+        console.log(this);
         await userRef.set({
           uid: this.uid,
           email: this.email,
           displayName: this.displayName,
-          isTeacher: this.isTeacher,
+          isAdmin: this.isAdmin,
           hours: this.hours,
           bookings: this.bookings,
           createdAt: new Date(),
@@ -30,10 +33,24 @@ export default class User {
       }
     }
   }
-
+  //document snapshot have a id property
   static async getUser(uid) {
     const user = await firestore.doc(`users/${uid}`).get();
-    return user.data();
+    let userObj = user.data();
+    userObj.bookings = await Booking.getBooking(userObj.bookings);
+    return userObj;
+  }
+
+  async addBooking(time) {
+    const newBooking = new Booking({ startAt: time, teacher: this.uid });
+    const data = await newBooking.create();
+    const fetchedUser = await User.getUser(this.uid);
+    const bookings = fetchedUser.bookings;
+    bookings.push(newBooking);
+    console.log(bookings);
+    return firestore
+      .doc(`users/${this.uid}`)
+      .update({ bookings: bookings.map((booking) => booking.id) });
   }
 
   static register(email, password) {
