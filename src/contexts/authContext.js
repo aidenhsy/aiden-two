@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       if (userAuth) {
         const fetchedUser = await User.getUser(userAuth.uid);
-        if (fetchedUser && fetchedUser.uid) {
+        if (fetchedUser && fetchedUser.id) {
           const user = new User(fetchedUser);
           //only create a new user when logged in
           //through third party providers

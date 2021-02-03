@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 
 export default class Booking {
   constructor(obj) {
+    this.id = obj.id || null;
     this.startAt = obj.startAt || null;
     this.endAt = obj.endAt || null;
     this.student = obj.student || null;
@@ -19,22 +20,14 @@ export default class Booking {
         teacher: this.teacher,
         createdAt: new Date(),
       });
-      this.id = data.id;
+      await firestore.doc(`bookings/${data.id}`).update({
+        id: data.id,
+      });
       return data;
     } catch (error) {
       console.log(error);
     }
   }
 
-  static async getBooking(bookingIDs) {
-    let bookingObjects = await firestore
-      .collection('bookings')
-      .where(firebase.firestore.FieldPath.documentId(), 'in', bookingIDs)
-      .get();
-    return bookingObjects.docs.map((t) => {
-      let data = t.data();
-      data.id = t.id;
-      return data;
-    });
-  }
+  static async getBooking(bookingIDs) {}
 }
