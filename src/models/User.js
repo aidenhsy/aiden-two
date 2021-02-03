@@ -1,5 +1,6 @@
 import { auth, firestore } from '../config/firebase';
 import Booking from '../models/Booking';
+import moment from 'moment';
 
 export default class User {
   constructor(auth) {
@@ -39,7 +40,11 @@ export default class User {
   }
 
   async addBooking(time) {
-    const newBooking = new Booking({ startAt: time, teacher: this.id });
+    const newBooking = new Booking({
+      startAt: time,
+      teacher: this.id,
+      endAt: moment(time).add(60, 'm').toISOString(),
+    });
     const data = await newBooking.create();
     const fetchedUser = await User.getUser(this.id);
     const bookings = fetchedUser.bookings;
