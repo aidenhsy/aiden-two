@@ -33,10 +33,17 @@ export default class User {
       }
     }
   }
-  //document snapshot have a id property
+
   static async getUser(id) {
     const user = await firestore.doc(`users/${id}`).get();
     return user.data();
+  }
+
+  async buyHours(boughtHours) {
+    const fetchedUser = await User.getUser(this.id);
+    const hours = fetchedUser.hours;
+    const newHours = hours + boughtHours;
+    return firestore.doc(`users/${this.id}`).update({ hours: newHours });
   }
 
   async addBooking(time) {
@@ -51,6 +58,22 @@ export default class User {
     bookings.push(data.id);
     console.log(bookings);
     return firestore.doc(`users/${this.id}`).update({ bookings: bookings });
+  }
+
+  book(bookingId) {
+    this.bookings.push(bookingId);
+    Booking.addStudent(bookingId, this.id);
+    return firestore
+      .doc(`users/${this.id}`)
+      .update({ bookings: this.bookings });
+  }
+
+  cancelBooking(bookingId) {
+    const newBookings = this.bookings.filter(
+      (booking) => booking !== bookingId
+    );
+    Booking.deleteStudent(bookingId);
+    return firestore.doc(`users/${this.id}`).update({ bookings: newBookings });
   }
 
   async deleteBooking(id) {

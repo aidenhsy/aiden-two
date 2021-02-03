@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
-import axios from 'axios';
+import { useRouter } from 'next/router';
 import moment from 'moment';
 import Booking from '../models/Booking';
 import { useAuth } from '../contexts/authContext';
@@ -17,21 +17,16 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
-  iconButton: {
-    background: 'linear-gradient(45deg, #303f9f, #7986cb)',
-    color: 'white',
-  },
   scheduleButton: {
-    marginTop: theme.spacing(2),
     height: theme.spacing(6),
-  },
-  root: {
-    height: '90vh',
+    marginTop: theme.spacing(2),
   },
   rootGrid: {
-    height: '100%',
+    height: '80vh',
+    alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
   },
@@ -39,21 +34,25 @@ const useStyles = makeStyles((theme) => ({
 
 const Schedule = () => {
   const classes = useStyles();
+  const router = useRouter();
   const { currentUser } = useAuth();
   const [availabilities, setAvailabilites] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchAvails = async () => {
+      setLoading(true);
       const data = await Booking.getAvailabilities();
       setAvailabilites(data);
+      setLoading(false);
     };
     fetchAvails();
   }, []);
 
-  console.log(availabilities);
-
-  const clickHandler = () => {
-    console.log('clicked');
+  const clickHandler = async (id) => {
+    setLoading(true);
+    await currentUser.book(id);
+    router.push('/dashboard');
   };
 
   return (
@@ -76,23 +75,28 @@ const Schedule = () => {
           </Container>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="xs" className={classes.root}>
-        <Grid container className={classes.rootGrid} spacing={2}>
-          {availabilities.map((avail) => (
-            <Grid item>
+      <Container maxWidth="xs">
+        {loading ? (
+          <Grid container className={classes.rootGrid}>
+            <CircularProgress size={100} thickness={6} color="secondary" />
+          </Grid>
+        ) : (
+          <Grid container className={classes.rootGrid} spacing={2}>
+            {availabilities.map((avail) => (
               <Button
                 type="submit"
                 color="primary"
                 className={classes.scheduleButton}
                 variant="contained"
-                onClick={clickHandler}
+                key={avail.id}
+                onClick={() => clickHandler(avail.id)}
                 fullWidth
               >
                 {moment(avail.startAt).format('MMMM Do YYYY, HH:mm')}
               </Button>
-            </Grid>
-          ))}
-        </Grid>
+            ))}
+          </Grid>
+        )}
       </Container>
     </React.Fragment>
   );

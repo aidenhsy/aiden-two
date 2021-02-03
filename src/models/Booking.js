@@ -34,6 +34,16 @@ export default class Booking {
     return response;
   }
 
+  static addStudent(bookingId, studentId) {
+    return firestore.doc(`bookings/${bookingId}`).update({
+      student: studentId,
+    });
+  }
+
+  static deleteStudent(bookingId) {
+    return firestore.doc(`bookings/${bookingId}`).update({ student: null });
+  }
+
   static async getAvailabilities() {
     const querySnapshot = await firestore
       .collection('bookings')
