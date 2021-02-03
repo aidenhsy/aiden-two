@@ -114,7 +114,7 @@ const AdminDashboard = () => {
                   </Typography>
                 </Grid>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <Link href="/admin/schedule">
                   <Card raised className={classes.card} variant="elevation">
                     <Grid
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Link href="/book">
+                <Link href="/admin/history">
                   <Card raised className={classes.card} variant="elevation">
                     <Grid
                       direction="column"
@@ -141,29 +141,13 @@ const AdminDashboard = () => {
                       spacing={0}
                       style={{ height: '100%' }}
                     >
-                      <Typography variant="h4">Book</Typography>
+                      <Typography variant="h4">History</Typography>
                     </Grid>
                   </Card>
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Link href="/booked">
-                  <Card raised className={classes.card} variant="elevation">
-                    <Grid
-                      direction="column"
-                      container
-                      justify="center"
-                      alignItems="center"
-                      spacing={0}
-                      style={{ height: '100%' }}
-                    >
-                      <Typography variant="h4">Booked</Typography>
-                    </Grid>
-                  </Card>
-                </Link>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Link href="/settings">
+                <Link href="/admin/settings">
                   <Card raised className={classes.card} variant="elevation">
                     <Grid
                       direction="column"

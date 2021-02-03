@@ -29,5 +29,10 @@ export default class Booking {
     }
   }
 
+  static async delete(id) {
+    const response = await firestore.doc(`bookings/${id}`).delete();
+    return response;
+  }
+
   static async getBooking(bookingIDs) {}
 }

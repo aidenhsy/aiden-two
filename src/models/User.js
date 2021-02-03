@@ -53,6 +53,30 @@ export default class User {
     return firestore.doc(`users/${this.id}`).update({ bookings: bookings });
   }
 
+  async deleteBooking(id) {
+    const fetchedUser = await User.getUser(this.id);
+    const bookings = fetchedUser.bookings;
+    const updatedBookings = bookings.filter((booking) => booking !== id);
+    await Booking.delete(id);
+    return firestore
+      .doc(`users/${this.id}`)
+      .update({ bookings: updatedBookings });
+  }
+
+  async getBookings() {
+    const fetchedUser = await User.getUser(this.id);
+    const bookingIds = fetchedUser.bookings;
+    const bookings = () => {
+      return Promise.all(
+        bookingIds.map(async (id) => {
+          const bookings = await firestore.doc(`bookings/${id}`).get();
+          return bookings.data();
+        })
+      );
+    };
+    return bookings();
+  }
+
   static register(email, password) {
     return auth.createUserWithEmailAndPassword(email, password);
   }
