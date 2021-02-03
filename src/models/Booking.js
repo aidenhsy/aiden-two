@@ -34,5 +34,14 @@ export default class Booking {
     return response;
   }
 
+  static async getAvailabilities() {
+    const querySnapshot = await firestore
+      .collection('bookings')
+      .where('student', '==', null)
+      .get();
+
+    return querySnapshot.docs.map((doc) => doc.data());
+  }
+
   static async getBooking(bookingIDs) {}
 }

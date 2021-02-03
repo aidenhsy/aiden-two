@@ -1,6 +1,11 @@
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Head from 'next/head';
 import axios from 'axios';
-import React, { useState } from 'react';
+import moment from 'moment';
+import Booking from '../models/Booking';
+import { useAuth } from '../contexts/authContext';
+
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,8 +17,6 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import { useAuth } from '../contexts/authContext';
-import Link from 'next/link';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -34,24 +37,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const times = [
-  '2021-01-26T10:00:00.000Z',
-  '2021-01-26T11:00:00.000Z',
-  '2021-01-27T11:00:00.000Z',
-  '2021-01-28T11:00:00.000Z',
-  '2021-01-29T11:00:00.000Z',
-];
-const formattedTimes = times.map((time) => new Date(time).toString());
-
 const Schedule = () => {
   const classes = useStyles();
   const { currentUser } = useAuth();
+  const [availabilities, setAvailabilites] = useState([]);
+
+  useEffect(() => {
+    const fetchAvails = async () => {
+      const data = await Booking.getAvailabilities();
+      setAvailabilites(data);
+    };
+    fetchAvails();
+  }, []);
+
+  console.log(availabilities);
 
   const clickHandler = () => {
     console.log('clicked');
   };
-
-  console.log(formattedTimes[0]);
 
   return (
     <React.Fragment>
@@ -75,7 +78,7 @@ const Schedule = () => {
       </AppBar>
       <Container maxWidth="xs" className={classes.root}>
         <Grid container className={classes.rootGrid} spacing={2}>
-          {formattedTimes.map((time) => (
+          {availabilities.map((avail) => (
             <Grid item>
               <Button
                 type="submit"
@@ -85,8 +88,7 @@ const Schedule = () => {
                 onClick={clickHandler}
                 fullWidth
               >
-                {time.split(' ').slice(0, -6).join(' ')} @{' '}
-                {time.split(' ')[4].slice(0, -3)}
+                {moment(avail.startAt).format('MMMM Do YYYY, HH:mm')}
               </Button>
             </Grid>
           ))}
