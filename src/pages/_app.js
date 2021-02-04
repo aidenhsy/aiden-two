@@ -7,11 +7,6 @@ import theme from '../components/common/theme';
 import { AuthProvider } from '../contexts/authContext';
 
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
@@ -35,9 +30,7 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <Elements stripe={stripePromise}>
-            <Component {...pageProps} />
-          </Elements>
+          <Component {...pageProps} />
         </AuthProvider>
       </ThemeProvider>
     </React.Fragment>

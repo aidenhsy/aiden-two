@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         }
         if (!user.displayName) {
           const fetchedUser = await User.getUser(userAuth.uid);
-          const user = fetchedUser;
+          const user = new User(fetchedUser);
           setCurrentUser(user);
           setLoading(false);
           return;
