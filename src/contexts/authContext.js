@@ -16,17 +16,19 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = auth.onAuthStateChanged(async (userAuth) => {
       setLoading(true);
       if (userAuth) {
-        const fetchedUser = await User.getUser(userAuth.uid);
-        if (fetchedUser && fetchedUser.id) {
-          const user = new User(fetchedUser);
-          //only create a new user when logged in
-          //through third party providers
-          if (user.displayName) {
-            await user.create();
-          }
+        const user = new User(userAuth);
+        if (user.displayName) {
+          await user.create();
+        }
+        if (!user.displayName) {
+          const fetchedUser = await User.getUser(userAuth.uid);
+          const user = fetchedUser;
           setCurrentUser(user);
           setLoading(false);
+          return;
         }
+        setCurrentUser(user);
+        setLoading(false);
       } else {
         setCurrentUser(null);
         setLoading(false);
